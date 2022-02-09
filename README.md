@@ -1,12 +1,3 @@
-NFT Token: 
- - ERC 721 standard
- - generate (batch minting of NFT EIP-2309)
-    - metadata for each nft
-    - https://medium.com/coinmonks/guide-to-creating-your-own-nft-with-javascript-solidity-part-1-of-3-7909b80fae94
-
-
-
-
 DEX: 
     - GUI
     - trading and matching engine
@@ -25,7 +16,3 @@ DEX:
 (Simply MARKETPLACE 
  - https://dev.to/dabit3/building-scalable-full-stack-apps-on-ethereum-with-polygon-2cfb
  )
-
-
- // porozdzielac dex na konteksty
- // 
