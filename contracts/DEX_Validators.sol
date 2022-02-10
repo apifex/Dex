@@ -12,7 +12,7 @@ abstract contract DEX_Validators is DEX_Internal {
         uint256 _fixedPrice,
         uint256 _endTime
         ) internal view returns(bool) {
-        require(_endTime > block.timestamp, "Duration must be more than zero");
+        require(_endTime > block.timestamp, "Duration must be longer than zero");
         require(_tokenContract.getApproved(_tokenId) == address(this) || 
                  _tokenContract.isApprovedForAll(_tokenContract.ownerOf(_tokenId), address(this)) == true, 
                  "DEX Contract must be approved to make transaction with this token ID");

@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC721.sol";
 import "../interfaces/IERC2981.sol";
+import "../interfaces/IDEX.sol";
 import "./DEX_Internal.sol";
 import "./DEX_Validators.sol";
 
-abstract contract DEX_Base is DEX_Internal, DEX_Validators{
+abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
 
      function _makeOrder(
         OrderType _orderType,

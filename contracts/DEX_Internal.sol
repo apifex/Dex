@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC721.sol";
 import "../interfaces/IERC2981.sol";
-import "../interfaces/IDEX.sol";
 
-abstract contract DEX_Internal is IDEX {
+
+abstract contract DEX_Internal {
 
     enum OrderType {
         AUCTION,
@@ -95,9 +95,11 @@ abstract contract DEX_Internal is IDEX {
 
     function _makePayments(Order memory order, TransactionType transactionType) internal {
         RoyaltyInfo memory royalty = _checkRoyalties(address(order.tokenContract), order.tokenId, order.fixedPrice);
+
         uint256 price = transactionType == TransactionType.AUCTION?order.lastBidPrice:order.fixedPrice;
         uint256 fee = (price * feePercent) / 10000;
         uint256 royaltyFee = (royalty.amount * royaltyFeePercent) / 10000;
+        
         payable(order.seller).transfer(price - fee - royalty.amount - royaltyFee);
         payable(feeAddress).transfer(fee + royaltyFee);
         payable(royalty.receiver).transfer(royalty.amount);

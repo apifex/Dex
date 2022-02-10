@@ -1,12 +1,6 @@
 DEX: 
-    - GUI
-    - trading and matching engine
-        - order book
-            - two buckets: buying and selling orders 
-        -  
-    - wallets 
-
-    https://github.com/TheGreatHB/NFTEX/blob/main/contracts/NFTEX.sol
+    
+    - https://github.com/TheGreatHB/NFTEX/blob/main/contracts/NFTEX.sol
 
     - https://merehead.com/blog/make-decentralized-cryptocurrency-exchange-dex/
     - https://medium.com/coinmonks/dex-contracts-20e11ed52ef7

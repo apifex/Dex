@@ -15,11 +15,11 @@ abstract contract DEX_Admin is DEX_Internal {
         admin = _newAdmin;
     }
 
-    function setFeeAddress(address _feeAddress) external onlyAdmin {
+    function changeFeeAddress(address _feeAddress) external onlyAdmin {
         feeAddress = _feeAddress;
     }
 
-    function updateFeePercent(uint16 _percent) external onlyAdmin {
+    function changeFeePercent(uint16 _percent) external onlyAdmin {
         require(_percent <= 10000, "input value is more than 100%");
         feePercent = _percent;
     }

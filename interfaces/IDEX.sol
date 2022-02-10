@@ -39,4 +39,23 @@ interface IDEX {
         uint256 _tokenId,
         bytes _data
     );
+
+
+    function makeAuctionOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 duration) external;
+
+    function makeFixedPriceOrder(IERC721 _token, uint256 _id, uint256 _fixedPrice, uint256 duration) external;
+
+    function makeMixedOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 _fixedPrice, uint256 duration) external;
+
+    function getCurrentPrice(bytes32 _order) external view returns (uint256);
+
+    function sellerTotalOrder(address _seller) external view returns (uint256);
+
+    function bid(bytes32 _order) payable external;
+
+    function buyItNow(bytes32 _order) payable external;
+
+    function claim(bytes32 _order) external;
+
+    function cancelOrder(bytes32 _order) external;
 }

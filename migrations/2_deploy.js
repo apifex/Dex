@@ -1,5 +1,5 @@
 // migrations/2_deploy.js
-
+const NFT = artifacts.require('NFT')
 const DEX = artifacts.require('DEX');
 
 module.exports = async function (deployer) {
@@ -8,5 +8,10 @@ module.exports = async function (deployer) {
   dexContract = await deployer.deploy(DEX, 1000, 100)
 
   console.log("DEX Contract address: ", dexContract.address)
+
+  //for test only
+  nftContract = await deployer.deploy(NFT, accounts[0], 50000, 1000)
+  
+  console.log("NFT Contract address: ", nftContract.address)
 
 };

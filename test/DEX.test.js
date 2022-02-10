@@ -5,6 +5,11 @@ const { expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const DEX = artifacts.require('DEX')
 const NFT = artifacts.require("NFT");
 
+//TODO: add more tests
+
+
+
+
 contract('DEX', function (accounts) {
 
     before(async function () {
@@ -26,9 +31,6 @@ contract('DEX', function (accounts) {
         await NFTContract.setBaseURI('https://ipfs.io/ipfs/QmcR4CPMWQ6yadhPqH3eSeU7NxMhCDyMyFGZrC8GjT2tms/')
         await NFTContract.safeMint(accounts[1], 0, '0.json', 1000)
         await NFTContract.mintMultiple(mintArrayAccounts, mintArrayIds, mintArrayJSONs, mintArrayRoyalties);
-
-        const roy = await NFTContract.royaltyInfo(0, 200);
-        console.log("roy", roy)
 
         await NFTContract.approve(this.dex.address, 0, { from: accounts[1] })
         await NFTContract.setApprovalForAll(this.dex.address, true)
@@ -61,34 +63,6 @@ contract('DEX', function (accounts) {
             return event.tokenContract == NFT.address && event.tokenId == 3 && event.seller == accounts[0] && event.taker == accounts[4] && event.price == web3.utils.toWei("0.2", "ether")
         })
         expect((await this.dex.sellerTotalOrder(accounts[0])).toString()).to.equal('2')
-    })
-
-    it('check finished order', async function () {
-        const order = await this.dex.makeAuctionOrder(NFT.address, 4, 500, 1)
-        const orderId = order.logs[0].args.orderId
-        const bid = await this.dex.bid(orderId, { from: accounts[3], value: web3.utils.toWei("0.08", "ether") })
-
-
-       it('check for errors'), async function() {
-        truffleAssert.eventEmitted(bid, "Bid", (event) => {
-            return event.tokenContract == NFT.address && event.tokenId == 4 && event.bidder == accounts[3] && event.bidPrice == web3.utils.toWei("0.08", "ether")
-        })
-
-        function timeout(ms) {
-              return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
-        await timeout(16000);
-
-        
-        await expectRevert(
-            this.dex.bid(orderId, { from: accounts[4], value: web3.utils.toWei("0.08", "ether") }),
-            "This order is over or canceled"
-        )
-       }
-        
-
-        expect((await this.dex.sellerTotalOrder(accounts[0])).toString()).to.equal('3')
     })
 
     it('bid', async function () {

@@ -12,15 +12,6 @@ const accounts = await web3.eth.getAccounts();
 dex.options.address = '0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B'
 
 const listen = () => {
-    dex.events.MakeOrder()  
-    .on('data', async event => {
-        const currentPrice = await dex.methods.getCurrentPrice(event.returnValues.hash).call()
-        console.log('current Price: ', currentPrice)    
-    })
-    .on('changed', changed => console.log(changed))
-    .on('error', err => {console.log('errrr'); throw err})
-    .on('connected', str => console.log(str))
-
     dex.events.allEvents()
     .on('data', event => console.log(event.event, event.returnValues))
     .on('changed', changed => console.log(changed))
