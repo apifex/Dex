@@ -10,3 +10,16 @@ DEX:
 (Simply MARKETPLACE 
  - https://dev.to/dabit3/building-scalable-full-stack-apps-on-ethereum-with-polygon-2cfb
  )
+
+
+
+front
+lista otwartych bidow
+tworzenie oferty
+buy it now
+make ofert (bid)
+accept bid
+token uri
+
+//
+testy w ethers

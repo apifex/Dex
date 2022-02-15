@@ -18,7 +18,8 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const {infuraRinkeby, mnemonic } = require('./secrets.json')
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -46,6 +47,13 @@ module.exports = {
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+
+    rinkeby: {
+      provider: () => new HDWalletProvider(
+        mnemonic, infuraRinkeby
+      ),
+      network_id: 4,
+    }
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port

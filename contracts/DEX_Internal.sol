@@ -47,6 +47,7 @@ abstract contract DEX_Internal {
     mapping(IERC721 => mapping(uint256 => bytes32)) public orderIdByToken;
     mapping(address => bytes32[]) public orderIdBySeller;
     mapping(bytes32 => Order) public orderInfo;
+    
 
     address public admin;
     address public feeAddress;
@@ -99,7 +100,7 @@ abstract contract DEX_Internal {
         uint256 price = transactionType == TransactionType.AUCTION?order.lastBidPrice:order.fixedPrice;
         uint256 fee = (price * feePercent) / 10000;
         uint256 royaltyFee = (royalty.amount * royaltyFeePercent) / 10000;
-        
+
         payable(order.seller).transfer(price - fee - royalty.amount - royaltyFee);
         payable(feeAddress).transfer(fee + royaltyFee);
         payable(royalty.receiver).transfer(royalty.amount);

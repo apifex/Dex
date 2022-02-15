@@ -37,7 +37,7 @@ abstract contract DEX_Validators is DEX_Internal {
     function _isValidBuyItNowOffer(bytes32 _orderID) internal view returns(bool) {
         Order memory order = orderInfo[_orderID];
         require(order.status == OrderStatus.ACTIVE, "This order is over or canceled");
-        require(order.orderType != OrderType.AUCTION, "It's an auction, you can't 'buy it now'");
+        require(order.orderType != OrderType.AUCTION, "You can't 'buy it now'");
         require(msg.value == order.fixedPrice, "Wrong price for 'Buy it now!'");
         return true;
     }
