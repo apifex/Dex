@@ -10,22 +10,26 @@ contract DEX is DEX_Base, DEX_Admin{
   }
 
   function makeAuctionOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 duration) external override {
-    uint256 _endTime = block.timestamp + duration;
+    uint256 _endTime = block.timestamp + duration * 1 seconds;
     _makeOrder(OrderType.AUCTION, _token, _id, _startPrice, 0, _endTime);
   } 
 
   function makeFixedPriceOrder(IERC721 _token, uint256 _id, uint256 _fixedPrice, uint256 duration) external override  {
-    uint256 _endTime = block.timestamp + duration;
+    uint256 _endTime = block.timestamp + duration * 1 seconds;
     _makeOrder(OrderType.FIXED, _token, _id, 0, _fixedPrice, _endTime);
   } 
 
   function makeMixedOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 _fixedPrice, uint256 duration) external override {
-    uint256 _endTime = block.timestamp + duration;
+    uint256 _endTime = block.timestamp + duration * 1 seconds;
     _makeOrder(OrderType.MIXED, _token, _id, _startPrice, _fixedPrice, _endTime);
   }
 
   function getCurrentPrice(bytes32 _order) external view override returns (uint256) {
     return _getCurrentPrice(_order);
+  }
+
+  function getOrderStatus(bytes32 _order) external view override returns (string memory status) {
+    return _checkOrderStatus(_order);
   }
 
   function sellerTotalOrder(address _seller) external view override returns (uint256) {

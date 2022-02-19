@@ -4,13 +4,17 @@ pragma solidity ^0.8.0;
 import './IERC721.sol';
 
 interface IDEX {
-    
+
     event MakeOrder(
         IERC721 indexed tokenContract,
         uint256 tokenId,
         bytes32 indexed orderId,
-        address seller
+        address seller,
+        uint8 indexed orderType,
+        uint256 startPrice,
+        uint256 buyItNowPrice
     );
+    
     event CancelOrder(
         IERC721 indexed tokenContract,
         uint256 tokenId,
@@ -33,13 +37,6 @@ interface IDEX {
         uint256 price
     );
 
-    event TestEvent(
-        address _operator,
-        address _from,
-        uint256 _tokenId,
-        bytes _data
-    );
-
 
     function makeAuctionOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 duration) external;
 
@@ -48,6 +45,8 @@ interface IDEX {
     function makeMixedOrder(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 _fixedPrice, uint256 duration) external;
 
     function getCurrentPrice(bytes32 _order) external view returns (uint256);
+
+    function getOrderStatus(bytes32 _order) external returns (string memory status);
 
     function sellerTotalOrder(address _seller) external view returns (uint256);
 

@@ -6,6 +6,7 @@ import "./DEX_Internal.sol";
 abstract contract DEX_Validators is DEX_Internal {
 
     function _isValidOrder(
+        OrderType _orderType,
         IERC721 _tokenContract, 
         uint256 _tokenId, 
         uint256 _startPrice,
@@ -17,12 +18,14 @@ abstract contract DEX_Validators is DEX_Internal {
                  _tokenContract.isApprovedForAll(_tokenContract.ownerOf(_tokenId), address(this)) == true, 
                  "DEX Contract must be approved to make transaction with this token ID");
         require(orderIdByToken[_tokenContract][_tokenId] == 0, "There is already an order for this token ID");
-        require(_startPrice > 0 || _fixedPrice > 0, "Price must be more than 0");
+        _orderType == OrderType.MIXED?
+            require(_startPrice > 0 && _fixedPrice > _startPrice, "Price must be more than 0 and 'buyItNowPrice' must be greater than 'startPrice'"):
+            require(_startPrice > 0 || _fixedPrice > 0, "Price must be more than 0");
         return true;
     }
 
     function _isValidBidOffer(bytes32 _orderID) internal view returns(bool) {
-        Order memory order = orderInfo[_orderID];
+        Order memory order = orderBook[_orderID];
         require(order.status == OrderStatus.ACTIVE, "This order is over or canceled");
         require(order.orderType != OrderType.FIXED, "Can not bid to this 'fixed price' order");
         require(order.seller != msg.sender, "Can not bid to your order");
@@ -35,7 +38,7 @@ abstract contract DEX_Validators is DEX_Internal {
     }
         
     function _isValidBuyItNowOffer(bytes32 _orderID) internal view returns(bool) {
-        Order memory order = orderInfo[_orderID];
+        Order memory order = orderBook[_orderID];
         require(order.status == OrderStatus.ACTIVE, "This order is over or canceled");
         require(order.orderType != OrderType.AUCTION, "You can't 'buy it now'");
         require(msg.value == order.fixedPrice, "Wrong price for 'Buy it now!'");
@@ -43,7 +46,7 @@ abstract contract DEX_Validators is DEX_Internal {
     }
 
     function _isValidClaim(bytes32 _order) internal view returns(bool) {
-        Order memory order = orderInfo[_order];
+        Order memory order = orderBook[_order];
         require(order.status == OrderStatus.OVER, "This order is not finish yet");
         require(order.orderType != OrderType.FIXED, "This order is not an auction");
         require(order.seller == msg.sender || order.lastBidder == msg.sender, "Access denied");
@@ -51,7 +54,7 @@ abstract contract DEX_Validators is DEX_Internal {
     }
 
   function _isValidCancelCall(bytes32 _order) internal view returns(bool) {
-        Order storage order = orderInfo[_order];
+        Order storage order = orderBook[_order];
         require(order.status == OrderStatus.ACTIVE, "This order is not active");
         require(order.seller == msg.sender, "Access denied");
         require(order.lastBidPrice == 0, "Bidding exist");

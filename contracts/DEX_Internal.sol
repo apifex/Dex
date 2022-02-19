@@ -46,7 +46,7 @@ abstract contract DEX_Internal {
 
     mapping(IERC721 => mapping(uint256 => bytes32)) public orderIdByToken;
     mapping(address => bytes32[]) public orderIdBySeller;
-    mapping(bytes32 => Order) public orderInfo;
+    mapping(bytes32 => Order) public orderBook;
     
 
     address public admin;
@@ -78,20 +78,28 @@ abstract contract DEX_Internal {
             );
     }
 
-    function _checkOrderStatus(bytes32 _order)
+    function _updateOrderStatus(bytes32 _order)
         internal
-        view
-        returns (OrderStatus)
     {
         require(
-            orderInfo[_order].seller != address(0),
+            orderBook[_order].seller != address(0),
             "This order does not exists"
         );
-        Order memory order = orderInfo[_order];
+        Order storage order = orderBook[_order];
         if (order.endTime < block.timestamp) {
             order.status = OrderStatus.OVER;
         }
-        return order.status;
+    }
+
+    function _checkOrderStatus(bytes32 _order)
+        internal view
+        returns(string memory orderStatus)
+    {
+        Order memory order = orderBook[_order];
+        if (order.status == OrderStatus.ACTIVE) return 'active';
+        if (order.status == OrderStatus.CANCELED) return 'canceled';
+        if (order.status == OrderStatus.SOLD) return 'sold';
+        if (order.status == OrderStatus.OVER || order.endTime < block.timestamp) return 'over';
     }
 
     function _makePayments(Order memory order, TransactionType transactionType) internal {

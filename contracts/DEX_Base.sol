@@ -17,11 +17,11 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
         uint256 _fixedPrice,
         uint256 _endTime
     ) internal {
-        _isValidOrder(_tokenContract, _tokenId, _startPrice, _fixedPrice, _endTime);
+        _isValidOrder(_orderType, _tokenContract, _tokenId, _startPrice, _fixedPrice, _endTime);
         
         bytes32 orderID = _makeOrderID(_tokenContract, _tokenId, msg.sender);
         
-        orderInfo[orderID] = Order(
+        orderBook[orderID] = Order(
             _orderType,
             OrderStatus.ACTIVE,
             msg.sender,
@@ -38,7 +38,7 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
         orderIdByToken[_tokenContract][_tokenId] = orderID;
         orderIdBySeller[msg.sender].push(orderID);
         
-        emit MakeOrder(_tokenContract, _tokenId, orderID, msg.sender);
+        emit MakeOrder(_tokenContract, _tokenId, orderID, msg.sender, uint8(_orderType), _startPrice, _fixedPrice);
     }
     
     function _getCurrentPrice(bytes32 _order)
@@ -46,8 +46,8 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
         view
         returns (uint256 price)
     {
-        require(_checkOrderStatus(_order) == OrderStatus.ACTIVE, "This order is over or canceled");
-        Order memory order = orderInfo[_order];
+        Order memory order = orderBook[_order];
+        require(order.status == OrderStatus.ACTIVE, "This order is over or canceled");
         uint256 lastBidPrice = order.lastBidPrice;
         if (order.orderType == OrderType.FIXED) {
             return order.fixedPrice;
@@ -59,12 +59,13 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
     }
 
     function _bid(bytes32 _order) internal {
+        _updateOrderStatus(_order);
         require(_isValidBidOffer(_order));
 
-        Order memory order = orderInfo[_order];
+        Order storage order = orderBook[_order];
         
-        if (block.timestamp > order.endTime - 5 minutes) {
-            order.endTime += 5 minutes;
+        if (block.timestamp > order.endTime - 5 seconds) {
+            order.endTime += 5 seconds;
         }
 
         if (order.lastBidPrice != 0) {
@@ -78,10 +79,10 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
     }
 
     function _buyItNow(bytes32 _order) internal {
+        _updateOrderStatus(_order);
         require(_isValidBuyItNowOffer(_order));
         
-        Order storage order = orderInfo[_order];
-        
+        Order storage order = orderBook[_order];
         order.status = OrderStatus.SOLD;
         
        _makePayments(order, TransactionType.BUYITNOW);
@@ -92,9 +93,11 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
     }
 
     function _claim(bytes32 _order) internal {
+        _updateOrderStatus(_order);
         require(_isValidClaim(_order));
 
-        Order storage order = orderInfo[_order];
+        Order storage order = orderBook[_order];
+        order.status = OrderStatus.SOLD;
         
         _makePayments(order, TransactionType.AUCTION);
         
@@ -104,9 +107,10 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
     }
 
     function _cancelOrder(bytes32 _order) internal {
+        _updateOrderStatus(_order);
         require(_isValidCancelCall(_order));
 
-        Order storage order = orderInfo[_order];
+        Order storage order = orderBook[_order];
 
         order.status = OrderStatus.CANCELED;
 
