@@ -17,7 +17,9 @@ abstract contract DEX_Validators is DEX_Internal {
         require(_tokenContract.getApproved(_tokenId) == address(this) || 
                  _tokenContract.isApprovedForAll(_tokenContract.ownerOf(_tokenId), address(this)) == true, 
                  "DEX Contract must be approved to make transaction with this token ID");
-        require(orderIdByToken[_tokenContract][_tokenId] == 0, "There is already an order for this token ID");
+        require(orderIdByToken[_tokenContract][_tokenId] == 0 ||
+                orderBook[orderIdByToken[_tokenContract][_tokenId]].status != OrderStatus.ACTIVE,
+                "There is already an active order for this token ID");
         _orderType == OrderType.MIXED?
             require(_startPrice > 0 && _fixedPrice > _startPrice, "Price must be more than 0 and 'buyItNowPrice' must be greater than 'startPrice'"):
             require(_startPrice > 0 || _fixedPrice > 0, "Price must be more than 0");

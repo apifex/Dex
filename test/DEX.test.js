@@ -24,7 +24,7 @@ contract('DEX', accounts => {
             let mintArrayJSONs = []
             let mintArrayRoyalties = []
     
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 25; i++) {
                 mintArrayAccounts.push(accounts[0])
                 mintArrayIds.push(i)
                 mintArrayJSONs.push(`${i}.json`)
@@ -162,7 +162,7 @@ contract('DEX', accounts => {
         )
         await truffleAssert.reverts(
             dex.makeMixedOrder(NFT.address, 0, 300, 400, 1000),
-            "There is already an order for this token ID"
+            "There is already an active order for this token ID"
         )
         await truffleAssert.reverts(
             dex.makeMixedOrder(NFT.address, 3, 100, 0, 1000),
@@ -437,6 +437,34 @@ contract('DEX', accounts => {
         )
 
     })
+
+    it('get ordersList', async function ()   {
+       const orderList_before = await dex.getOrdersList()
+
+        const auctionOrder = await dex.makeAuctionOrder(NFT.address, 19, prices.startPrice, 3)
+        const auctionOrderID = auctionOrder.logs[0].args.orderId
+        const fixedOrder = await dex.makeFixedPriceOrder(NFT.address, 20, prices.fixedPrice, 2000)
+        const fixedOrderID = fixedOrder.logs[0].args.orderId
+        
+        const orderList_after = await dex.getOrdersList()
+        
+        expect(orderList_before.length == orderList_after +2)
+        expect(orderList_after[orderList_after.length-1] == fixedOrderID)
+        expect(orderList_after[orderList_after.length-2] == auctionOrderID)
+    
+    })
+
+    it('get orderInfo', async function ()   {
+         const auctionOrder = await dex.makeAuctionOrder(NFT.address, 21, prices.startPrice, 30)
+         const auctionOrderID = auctionOrder.logs[0].args.orderId
+    
+         const orderInfo = await dex.getOrderInfo(auctionOrderID)
+
+         expect(orderInfo.tokenAddress == NFT.address)
+         expect(orderInfo.tokenId == 21)
+         expect(orderInfo.startPrice == prices.startPrice)
+     
+     })
 
 })
 

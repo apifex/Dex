@@ -9,9 +9,9 @@ module.exports = async function (deployer) {
 
   console.log("DEX Contract address: ", dexContract.address)
 
-  //for test only
-  nftContract = await deployer.deploy(NFT, accounts[0], 50000, 1000)
+  // for test only
+  // nftContract = await deployer.deploy(NFT, accounts[0], 50000, 1000)
   
-  console.log("NFT Contract address: ", nftContract.address)
+  // console.log("NFT Contract address: ", nftContract.address)
 
 };

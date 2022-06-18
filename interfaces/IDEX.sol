@@ -48,6 +48,8 @@ interface IDEX {
 
     function getOrderStatus(bytes32 _order) external returns (string memory status);
 
+    function getOrdersList() external returns (bytes32[] memory);
+
     function sellerTotalOrder(address _seller) external view returns (uint256);
 
     function bid(bytes32 _order) payable external;

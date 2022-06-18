@@ -44,9 +44,22 @@ abstract contract DEX_Internal {
         uint256 amount;
     }
 
+    struct OrderInfo {
+        IERC721 tokenAddress; 
+        uint256 tokenId;
+        string  tokenMetadataURI;
+        address seller;
+        uint256 startPrice;
+        uint256 fixedPrice;
+        uint256 actualPrice; 
+        address lastBidder;
+        uint256 endTime;
+    }
+
     mapping(IERC721 => mapping(uint256 => bytes32)) public orderIdByToken;
     mapping(address => bytes32[]) public orderIdBySeller;
     mapping(bytes32 => Order) public orderBook;
+    bytes32[] public orderList;
     
 
     address public admin;
@@ -94,12 +107,13 @@ abstract contract DEX_Internal {
     function _checkOrderStatus(bytes32 _order)
         internal view
         returns(string memory orderStatus)
-    {
+    {   
         Order memory order = orderBook[_order];
-        if (order.status == OrderStatus.ACTIVE) return 'active';
         if (order.status == OrderStatus.CANCELED) return 'canceled';
         if (order.status == OrderStatus.SOLD) return 'sold';
         if (order.status == OrderStatus.OVER || order.endTime < block.timestamp) return 'over';
+        if (order.status == OrderStatus.ACTIVE) return 'active';    
+        return 'not exists';
     }
 
     function _makePayments(Order memory order, TransactionType transactionType) internal {

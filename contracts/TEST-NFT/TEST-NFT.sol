@@ -15,7 +15,7 @@ contract NFT is NFT_Base, NFT_Mint {
         _baseURI = baseUri;
     }
 
-    function tokenUri(uint256 _tokenId) external view returns (string memory) {
+    function getTokenURI(uint256 _tokenId) external view override returns (string memory) {
         return _getTokenURI(_tokenId);
     }
 

@@ -37,7 +37,8 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
         
         orderIdByToken[_tokenContract][_tokenId] = orderID;
         orderIdBySeller[msg.sender].push(orderID);
-        
+        orderList.push(orderID);
+
         emit MakeOrder(_tokenContract, _tokenId, orderID, msg.sender, uint8(_orderType), _startPrice, _fixedPrice);
     }
     
@@ -47,7 +48,6 @@ abstract contract DEX_Base is DEX_Internal, DEX_Validators, IDEX {
         returns (uint256 price)
     {
         Order memory order = orderBook[_order];
-        require(order.status == OrderStatus.ACTIVE, "This order is over or canceled");
         uint256 lastBidPrice = order.lastBidPrice;
         if (order.orderType == OrderType.FIXED) {
             return order.fixedPrice;

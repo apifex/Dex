@@ -140,4 +140,6 @@ interface IERC721 {
         uint256 tokenId,
         bytes calldata data
     ) external;
+
+    function getTokenURI(uint256 tokenId) external view returns (string memory);
 }

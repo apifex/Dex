@@ -2,6 +2,9 @@ import { ethers, utils } from "ethers";
 import {mnemonic, infuraKey} from "../secrets.json";
 
 
+// ethers -> FE + BE
+
+
 async function metaMask() {
     const wallet = ethers.Wallet.fromMnemonic(mnemonic)
     // console.log(account)

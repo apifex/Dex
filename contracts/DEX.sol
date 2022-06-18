@@ -28,11 +28,35 @@ contract DEX is DEX_Base, DEX_Admin{
     return _getCurrentPrice(_order);
   }
 
-  function getOrderStatus(bytes32 _order) external view override returns (string memory status) {
+  function getOrderStatus(bytes32 _order) external view override returns (string memory) {
     return _checkOrderStatus(_order);
   }
 
-  function sellerTotalOrder(address _seller) external view override returns (uint256) {
+  function getOrdersList() external view override returns (bytes32[] memory) {
+    return orderList;
+  }
+
+  function getOrderForToken(IERC721 tokenContract, uint256 tokenId) external view returns(bytes32) {
+        return orderIdByToken[tokenContract][tokenId];
+  }
+
+  function getOrderInfo(bytes32 _order) external view returns(OrderInfo memory orderInfo) {
+    Order memory order = orderBook[_order];
+    return OrderInfo(
+              { tokenAddress: order.tokenContract,
+                tokenId: order.tokenId,
+                tokenMetadataURI: order.tokenContract.getTokenURI(order.tokenId),
+                seller: order.seller,
+                startPrice: order.startPrice,
+                fixedPrice: order.fixedPrice,
+                actualPrice: this.getCurrentPrice(_order),
+                lastBidder: order.lastBidder,
+                endTime: order.endTime
+              }
+            );
+  }
+
+   function sellerTotalOrder(address _seller) external view override returns (uint256) {
     return orderIdBySeller[_seller].length;
   }
 
