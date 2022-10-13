@@ -18,11 +18,9 @@
  *
  */
 
+require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const {infuraRinkeby, mnemonic } = require('./secrets.json')
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const {INFURA_API_KEY, MNEMONIC} = process.env;
 
 module.exports = {
   /**
@@ -48,11 +46,10 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
 
-    rinkeby: {
-      provider: () => new HDWalletProvider(
-        mnemonic, infuraRinkeby
-      ),
-      network_id: 4,
+    goerli: {
+      provider: () => new HDWalletProvider(MNEMONIC, INFURA_API_KEY),
+      network_id: '5',
+      gas: 4465030
     }
     // Another network with more advanced options...
     // advanced: {
